@@ -1,4 +1,4 @@
-package org.lamisplus.modules.bootstrap.yml;
+package org.lamisplus.modules.bootstrap.domain.dto;
 
 import lombok.Data;
 

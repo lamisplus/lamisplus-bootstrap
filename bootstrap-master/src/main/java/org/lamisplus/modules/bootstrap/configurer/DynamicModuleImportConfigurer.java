@@ -1,4 +1,4 @@
-package org.lamisplus.modules.bootstrap.configurer;
+package org.lamisplus.modules.bootstrap.config;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;

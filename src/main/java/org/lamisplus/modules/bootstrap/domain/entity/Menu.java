@@ -13,7 +13,6 @@ import java.io.Serializable;
 @Table(name = "menu")
 public class Menu implements Serializable {
     @Id
-    @Column(name = "id", updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -27,7 +26,7 @@ public class Menu implements Serializable {
 
     @Basic
     @Column(name = "module_id")
-    private Long moduleId;
+    private String moduleId;
 
     @Basic
     @Column(name = "archived")

@@ -1,4 +1,4 @@
-package org.lamisplus.modules.bootstrap.configurer;
+package org.lamisplus.modules.bootstrap.config;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,9 +17,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.lamisplus.modules.bootstrap.module.ApplicationProperties;
 import org.lamisplus.modules.bootstrap.module.ModuleFileStorageService;
 import org.lamisplus.modules.bootstrap.module.ModuleUtils;
-import org.lamisplus.modules.bootstrap.yml.ConfigSchemaValidator;
-import org.lamisplus.modules.bootstrap.yml.Dependency;
-import org.lamisplus.modules.bootstrap.yml.ModuleConfig;
+import org.lamisplus.modules.bootstrap.domain.dto.Dependency;
+import org.lamisplus.modules.bootstrap.domain.dto.ModuleConfig;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.annotation.Configuration;
@@ -80,7 +79,7 @@ public class DynamicModuleImportConfigurer implements AcrossContextConfigurer {
     }
 
     private List<Module> getActiveModules() {
-        return jdbcTemplate.query("select id, name, version, artifact from module where active = true and uninstall = false and module_type=1 and archived=0",
+        return jdbcTemplate.query("select id, name, version, artifact from module where active = true and uninstall = false",
             new BeanPropertyRowMapper<>(Module.class));
     }
 
@@ -136,7 +135,7 @@ public class DynamicModuleImportConfigurer implements AcrossContextConfigurer {
 
     private ModuleArtifact getModuleArtifact(String moduleId) {
         ModuleArtifact moduleArtifact = jdbcTemplate.queryForObject("" +
-                "select name, artifact, base_package, data from module m where m.id = ? and module_type=1",
+                "select name, artifact, base_package, data from module m where m.id = ?",
             new BeanPropertyRowMapper<>(ModuleArtifact.class), moduleId);
         if (moduleArtifact == null) {
             return null;
@@ -176,7 +175,7 @@ public class DynamicModuleImportConfigurer implements AcrossContextConfigurer {
                     List<Dependency> deps = config.getDependencies();
                     List<Map<String, Object>> dependencies = config.getDependencies().stream()
                         .flatMap(d -> jdbcTemplate.queryForList(
-                            "select id, version installed, ? required, active, name from module where name = ? and module_type=1",
+                            "select id, version installed, ? required, active, name from module where name = ?",
                             d.getVersion(), d.getName())
                             .stream())
                         .collect(Collectors.toList());
@@ -213,9 +212,6 @@ public class DynamicModuleImportConfigurer implements AcrossContextConfigurer {
     List<Module> getResolvedModules() {
         return getActiveModules().stream()
             .filter(module -> {
-                LOG.info("Module: {}", module);
-                LOG.info("Dep Met: {}", moduleDependenciesMet(module));
-                LOG.info("Valid Artf: {}",validArtifact(module.id));
                 boolean valid = moduleDependenciesMet(module) && validArtifact(module.id);
                 if (!valid) {
                     classNames = classNames.stream()
@@ -232,7 +228,7 @@ public class DynamicModuleImportConfigurer implements AcrossContextConfigurer {
         jdbcTemplate = new JdbcTemplate(dataSource);
         String modulePath = applicationProperties.getModulePath();
         try {
-            jdbcTemplate.update("update module set started = false where module_type=1");
+            jdbcTemplate.update("update module set started = false");
             getResolvedModules().forEach(module -> {
                 String artifact = module.artifact;
                 final Path moduleRuntimePath = Paths.get(modulePath, "runtime",

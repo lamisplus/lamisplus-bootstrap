@@ -17,7 +17,7 @@ import org.lamisplus.modules.bootstrap.module.ModuleFileStorageService;
 import org.lamisplus.modules.bootstrap.module.ModuleUtils;
 import org.lamisplus.modules.bootstrap.repository.MenuRepository;
 import org.lamisplus.modules.bootstrap.repository.ModuleRepository;
-import org.lamisplus.modules.bootstrap.yml.ModuleConfig;
+import org.lamisplus.modules.bootstrap.domain.dto.ModuleConfig;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -70,7 +70,7 @@ public class ModuleService {
     }
 
     public List<Module> getModules() {
-        return moduleRepository.findAllByStatusNot(1);
+        return moduleRepository.findAllByStatusNot(0);
     }
 
     @SneakyThrows
@@ -83,7 +83,6 @@ public class ModuleService {
         module.setBuildTime(updateModule.getBuildTime());
         module.setArtifact(updateModule.getArtifact());
         module.setActive(true);
-        module.setArchived(UN_ARCHIVED);
         module.setProcessConfig(true);
         module = moduleRepository.save(module);
 
@@ -114,9 +113,12 @@ public class ModuleService {
         Manifest manifest = new Manifest(url.openStream());
         Attributes attributes = manifest.getMainAttributes();
         module.setVersion(attributes.getValue("Implementation-Version"));
-        module.setDescription(attributes.getValue("Implementation-Title"));
-        if (StringUtils.isNotBlank(config.getSummary())) {
+        if(StringUtils.isBlank(config.getDescription())){
+            module.setDescription(attributes.getValue("Implementation-Title"));
+        }else if (StringUtils.isNotBlank(config.getSummary())) {
             module.setDescription(config.getSummary());
+        } else {
+            module.setDescription(config.getDescription());
         }
         try {
             Date date = DateUtils.parseDate(attributes.getValue("Build-Time"), "yyyyMMdd-HHmm",
@@ -128,7 +130,6 @@ public class ModuleService {
         module.setName(config.getName());
         module.setBasePackage(config.getBasePackage());
         module.setStatus(1);
-        module.setArchived(1);
         return module;
     }
 
@@ -188,7 +189,7 @@ public class ModuleService {
                     menu.setName(module.getName());
                     menu.setUrl(config.getMenuUrl());
                     menu.setName(config.getMenuName());
-                    menu.setArchived(UN_ARCHIVED);
+                    menu.setArchived(0);
                     menu.setModuleId(externalModule.getId());
                     LOG.info("Module Id: ", externalModule.getId());
                     menuRepository.save(menu);
@@ -200,7 +201,7 @@ public class ModuleService {
     }
 
     public List<Module> getAllCoreModulesByModuleType() {
-        return moduleRepository.findAllByModuleType(0);
+        return moduleRepository.findAllByModuleType(1);
     }
 
     public Module save(Module module) {

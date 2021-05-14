@@ -2,7 +2,7 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$id": "#",
     "type": "object",
-    "title": "The Schema LAMIS Module configuration",
+    "title": "The Schema LAMISPlus Module configuration",
     "required": [
         "name",
         "version",
@@ -87,6 +87,9 @@
             "type": "string"
         },
         "menuName": {
+            "type": "string"
+        },
+        "description": {
             "type": "string"
         }
     },

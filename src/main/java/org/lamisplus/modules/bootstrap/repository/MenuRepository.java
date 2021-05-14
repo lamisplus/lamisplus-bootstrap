@@ -19,5 +19,5 @@ public interface MenuRepository extends JpaRepository<Menu, Long>, JpaSpecificat
 
     Optional<Menu> findByName(String name);
 
-    Optional<Menu> findByModuleId(Long moduleId);
+    Optional<Menu> findByModuleId(String moduleId);
 }

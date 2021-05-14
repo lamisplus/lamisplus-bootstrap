@@ -1,7 +1,6 @@
-package org.lamisplus.modules.bootstrap.yml;
+package org.lamisplus.modules.bootstrap.domain.dto;
 
 import lombok.Data;
-import org.lamisplus.modules.bootstrap.domain.entity.Menu;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +12,7 @@ public class ModuleConfig {
     private String version;
     private boolean store = true;
     private String summary;
+    private String description;
     private List<Dependency> dependencies = new ArrayList<>();
     private List<Permission> permissions = new ArrayList<>();
     private List<Role> roles = new ArrayList<>();

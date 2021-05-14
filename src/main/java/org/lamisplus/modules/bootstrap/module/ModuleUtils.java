@@ -3,7 +3,7 @@ package org.lamisplus.modules.bootstrap.module;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.lamisplus.modules.bootstrap.yml.ModuleConfig;
+import org.lamisplus.modules.bootstrap.domain.dto.ModuleConfig;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;

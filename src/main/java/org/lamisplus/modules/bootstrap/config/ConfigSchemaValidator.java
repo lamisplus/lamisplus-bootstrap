@@ -1,4 +1,4 @@
-package org.lamisplus.modules.bootstrap.yml;
+package org.lamisplus.modules.bootstrap.config;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -11,6 +11,7 @@ import com.networknt.schema.SpecVersion;
 import com.networknt.schema.ValidationMessage;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.lamisplus.modules.bootstrap.domain.dto.ModuleConfig;
 import org.springframework.core.io.ClassPathResource;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;

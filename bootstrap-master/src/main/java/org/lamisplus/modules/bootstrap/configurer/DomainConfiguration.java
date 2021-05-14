@@ -1,4 +1,4 @@
-package org.lamisplus.modules.bootstrap.configurer;
+package org.lamisplus.modules.bootstrap.config;
 
 
 import org.springframework.context.annotation.Configuration;
