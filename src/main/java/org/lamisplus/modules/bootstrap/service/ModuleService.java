@@ -17,7 +17,7 @@ import org.lamisplus.modules.bootstrap.module.ModuleFileStorageService;
 import org.lamisplus.modules.bootstrap.module.ModuleUtils;
 import org.lamisplus.modules.bootstrap.repository.MenuRepository;
 import org.lamisplus.modules.bootstrap.repository.ModuleRepository;
-import org.lamisplus.modules.bootstrap.domain.dto.ModuleConfig;
+import org.lamisplus.modules.bootstrap.domain.dto.ModuleConfigDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -106,7 +106,7 @@ public class ModuleService {
     @SneakyThrows
     public Module uploadModuleData(MultipartFile file) {
         Module module = new Module();
-        ModuleConfig config = ModuleUtils.loadModuleConfig(file.getInputStream(), "module.yml");
+        ModuleConfigDTO config = ModuleUtils.loadModuleConfig(file.getInputStream(), "module.yml");
         String fileName = storageService.store(config.getName(), file);
         URLClassLoader classLoader = new URLClassLoader(new URL[]{storageService.getURL(fileName)});
         URL url = classLoader.findResource("META-INF/MANIFEST.MF");
@@ -146,7 +146,7 @@ public class ModuleService {
                 } else {
                     inputStream = storageService.readFile(module.getArtifact());
                 }
-                ModuleConfig config = ModuleUtils.loadModuleConfig(inputStream, "module.yml");
+                ModuleConfigDTO config = ModuleUtils.loadModuleConfig(inputStream, "module.yml");
                 if (config != null) {
                     config.getDependencies()
                         .forEach(dependency -> {
@@ -177,7 +177,7 @@ public class ModuleService {
         try {
             InputStream stream = storageService.readFile(module.getArtifact());
             byte[] data = IOUtils.toByteArray(stream);
-            ModuleConfig config = ModuleUtils.loadModuleConfig(new ByteArrayInputStream(data), "module.yml");
+            ModuleConfigDTO config = ModuleUtils.loadModuleConfig(new ByteArrayInputStream(data), "module.yml");
             if (config != null && config.isStore()) {
                 LOG.info("config {}", config);
                 module.setData(data);

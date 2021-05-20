@@ -3,7 +3,7 @@ package org.lamisplus.modules.bootstrap.module;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.lamisplus.modules.bootstrap.domain.dto.ModuleConfig;
+import org.lamisplus.modules.bootstrap.domain.dto.ModuleConfigDTO;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -67,7 +67,7 @@ public class ModuleUtils {
         }
     }
 
-    public static ModuleConfig loadModuleConfig(InputStream zip, String name) throws Exception {
+    public static ModuleConfigDTO loadModuleConfig(InputStream zip, String name) throws Exception {
         try (ZipInputStream zin = new ZipInputStream(zip)) {
             ZipEntry entry;
             while ((entry = zin.getNextEntry()) != null) {
@@ -77,7 +77,7 @@ public class ModuleUtils {
                 if (entry.getName().equals(name)) {
                     BufferedReader in = new BufferedReader(
                         new InputStreamReader(zin));
-                    Yaml yaml = new Yaml(new Constructor(ModuleConfig.class));
+                    Yaml yaml = new Yaml(new Constructor(ModuleConfigDTO.class));
                     return yaml.load(in);
                 }
             }

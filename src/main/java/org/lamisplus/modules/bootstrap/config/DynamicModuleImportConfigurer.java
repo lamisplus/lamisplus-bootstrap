@@ -17,8 +17,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.lamisplus.modules.bootstrap.module.ApplicationProperties;
 import org.lamisplus.modules.bootstrap.module.ModuleFileStorageService;
 import org.lamisplus.modules.bootstrap.module.ModuleUtils;
-import org.lamisplus.modules.bootstrap.domain.dto.Dependency;
-import org.lamisplus.modules.bootstrap.domain.dto.ModuleConfig;
+import org.lamisplus.modules.bootstrap.domain.dto.DependencyDTO;
+import org.lamisplus.modules.bootstrap.domain.dto.ModuleConfigDTO;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.annotation.Configuration;
@@ -105,7 +105,7 @@ public class DynamicModuleImportConfigurer implements AcrossContextConfigurer {
         classLoader.close();
         boolean valid = !beans.isEmpty();
 
-        ModuleConfig config = null;
+        ModuleConfigDTO config = null;
         try {
             config = ModuleUtils.loadModuleConfig(new FileInputStream(tmpFile.toFile()), "module.yml");
         } catch (Exception e) {
@@ -170,9 +170,9 @@ public class DynamicModuleImportConfigurer implements AcrossContextConfigurer {
         ModuleArtifact artifact = getModuleArtifact(module.id);
         if (artifact != null && artifact.data != null) {
             try {
-                ModuleConfig config = ModuleUtils.loadModuleConfig(new ByteArrayInputStream(artifact.data), "module.yml");
+                ModuleConfigDTO config = ModuleUtils.loadModuleConfig(new ByteArrayInputStream(artifact.data), "module.yml");
                 if (config != null) {
-                    List<Dependency> deps = config.getDependencies();
+                    List<DependencyDTO> deps = config.getDependencies();
                     List<Map<String, Object>> dependencies = config.getDependencies().stream()
                         .flatMap(d -> jdbcTemplate.queryForList(
                             "select id, version installed, ? required, active, name from module where name = ?",

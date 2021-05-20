@@ -11,7 +11,7 @@ import com.networknt.schema.SpecVersion;
 import com.networknt.schema.ValidationMessage;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.lamisplus.modules.bootstrap.domain.dto.ModuleConfig;
+import org.lamisplus.modules.bootstrap.domain.dto.ModuleConfigDTO;
 import org.springframework.core.io.ClassPathResource;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -45,7 +45,7 @@ public class ConfigSchemaValidator {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             MAPPER.writeValue(baos, MAPPER.readTree(config));
-            Yaml yaml = new Yaml(new Constructor(ModuleConfig.class));
+            Yaml yaml = new Yaml(new Constructor(ModuleConfigDTO.class));
             yaml.load(baos.toString());
         } catch (Exception e) {
             LOG.error("Error: {}", e.getMessage());

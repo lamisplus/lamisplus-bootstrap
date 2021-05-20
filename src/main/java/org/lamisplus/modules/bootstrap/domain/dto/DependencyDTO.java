@@ -3,7 +3,7 @@ package org.lamisplus.modules.bootstrap.domain.dto;
 import lombok.Data;
 
 @Data
-public class Permission {
+public class DependencyDTO {
     private String name;
-    private String description;
+    private String version;
 }
