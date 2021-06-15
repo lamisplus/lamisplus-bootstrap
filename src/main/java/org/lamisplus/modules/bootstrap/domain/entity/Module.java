@@ -47,7 +47,7 @@ public class Module implements Serializable, Persistable<String> {
 
     private Date buildTime;
 
-    private int status;
+    private Integer status;
 
     @NotNull
     private Boolean active = true;

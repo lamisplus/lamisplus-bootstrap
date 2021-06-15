@@ -84,6 +84,7 @@ public class ModuleService {
         module.setArtifact(updateModule.getArtifact());
         module.setActive(true);
         module.setProcessConfig(true);
+        module.setModuleType(2);
         module = moduleRepository.save(module);
 
         saveModuleData(module);
@@ -107,7 +108,13 @@ public class ModuleService {
     public Module uploadModuleData(MultipartFile file) {
         Module module = new Module();
         ModuleConfigDTO config = ModuleUtils.loadModuleConfig(file.getInputStream(), "module.yml");
-        String fileName = storageService.store(config.getName(), file);
+        Optional<Module> optionalModule = moduleRepository.findByNameAndModuleType(config.getName(), 2);
+        if(optionalModule.isPresent()){
+            module.setStatus(11);
+        } else {
+            module.setStatus(1);
+        }
+        String fileName = storageService.store(config.getName(), file, module.getStatus());
         URLClassLoader classLoader = new URLClassLoader(new URL[]{storageService.getURL(fileName)});
         URL url = classLoader.findResource("META-INF/MANIFEST.MF");
         Manifest manifest = new Manifest(url.openStream());
@@ -129,7 +136,6 @@ public class ModuleService {
         module.setArtifact(StringUtils.replace(fileName, "\\", "/"));
         module.setName(config.getName());
         module.setBasePackage(config.getBasePackage());
-        module.setStatus(1);
         return module;
     }
 
@@ -144,7 +150,7 @@ public class ModuleService {
                 if (data != null) {
                     inputStream = new ByteArrayInputStream(data);
                 } else {
-                    inputStream = storageService.readFile(module.getArtifact());
+                    inputStream = storageService.readFile(module.getArtifact(), module.getStatus());
                 }
                 ModuleConfigDTO config = ModuleUtils.loadModuleConfig(inputStream, "module.yml");
                 if (config != null) {
@@ -175,7 +181,7 @@ public class ModuleService {
 
     private void saveModuleData(Module module) {
         try {
-            InputStream stream = storageService.readFile(module.getArtifact());
+            InputStream stream = storageService.readFile(module.getArtifact(), module.getStatus());
             byte[] data = IOUtils.toByteArray(stream);
             ModuleConfigDTO config = ModuleUtils.loadModuleConfig(new ByteArrayInputStream(data), "module.yml");
             if (config != null && config.isStore()) {

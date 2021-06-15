@@ -18,13 +18,16 @@ import java.nio.file.Paths;
 @Configuration
 @Slf4j
 public class ModuleFileStorageService {
-    private final Path rootLocation;
+    private Path rootLocation;
 
     public ModuleFileStorageService(ApplicationProperties properties) {
         this.rootLocation = Paths.get(properties.getModulePath());
     }
 
-    public String store(String module, MultipartFile file) {
+    public String store(String module, MultipartFile file, Integer status) {
+        if(status == 11){
+            this.rootLocation = Paths.get(System.getProperty("java.io.tmpdir"));
+        }
         module = module.toLowerCase();
         String filename = module + File.separator + StringUtils.cleanPath(file.getOriginalFilename());
         if (filename.endsWith(File.separator)) {
@@ -58,7 +61,7 @@ public class ModuleFileStorageService {
         return filename;
     }
 
-    public String store(String module, String name, InputStream inputStream) {
+    /*public String store(String module, String name, InputStream inputStream) {
         module = module.toLowerCase();
         String filename = module + File.separator + StringUtils.cleanPath(name);
         if (filename.endsWith(File.separator)) {
@@ -83,9 +86,12 @@ public class ModuleFileStorageService {
             throw new RuntimeException("Failed to store file " + filename, e);
         }
         return filename;
-    }
+    }*/
 
-    public InputStream readFile(String file) throws FileNotFoundException {
+    public InputStream readFile(String file, Integer status) throws FileNotFoundException {
+        if(status != null && status == 11){
+            this.rootLocation = Paths.get(System.getProperty("java.io.tmpdir"));
+        }
         return new FileInputStream(rootLocation.resolve(file).toFile());
     }
 

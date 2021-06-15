@@ -143,7 +143,7 @@ public class DynamicModuleImportConfigurer implements AcrossContextConfigurer {
         if (moduleArtifact.data == null) {
             InputStream is;
             try {
-                is = storageService.readFile(moduleArtifact.artifact);
+                is = storageService.readFile(moduleArtifact.artifact, null);
                 moduleArtifact.data = IOUtils.toByteArray(is);
             } catch (IOException e) {
                 e.printStackTrace();

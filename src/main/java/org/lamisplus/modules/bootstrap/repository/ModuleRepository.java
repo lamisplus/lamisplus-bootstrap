@@ -24,4 +24,6 @@ public interface ModuleRepository extends JpaRepository<Module, String> {
     Optional<Module> findByIdAndStatus(String id, int status);
 
     List<Module> findAllByModuleType(int moduleType);
+
+    Optional<Module> findByNameAndModuleType(String name, int moduleType);
 }
